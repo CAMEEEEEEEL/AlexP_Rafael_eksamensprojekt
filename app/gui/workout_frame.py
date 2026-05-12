@@ -24,25 +24,34 @@ class WorkoutFrame(ttk.Frame):
 
         # ── Filter row ────────────────────────────────────────────────
         filter_row = ttk.Frame(self)
-        filter_row.pack(fill="x", pady=(0, 6))
+        filter_row.pack(fill="x", pady=(0, 2))
 
-        ttk.Label(filter_row, text="Muscle group:").pack(side="left")
+        ttk.Label(filter_row, text="Muscle:").pack(side="left")
         self.muscle_var = tk.StringVar(value=_ALL)
         muscle_groups = [_ALL] + get_muscle_groups()
         self.muscle_box = ttk.Combobox(
             filter_row, textvariable=self.muscle_var,
-            values=muscle_groups, state="readonly", width=16,
+            values=muscle_groups, state="readonly", width=14,
         )
         self.muscle_box.pack(side="left", padx=(4, 12))
         self.muscle_box.bind("<<ComboboxSelected>>", self._on_muscle_changed)
 
-        ttk.Label(filter_row, text="Exercise:").pack(side="left")
+        ttk.Label(filter_row, text="Search:").pack(side="left")
+        self.search_var = tk.StringVar()
+        search_entry = ttk.Entry(filter_row, textvariable=self.search_var, width=18)
+        search_entry.pack(side="left", padx=(4, 4))
+        self.search_var.trace_add("write", self._on_search_changed)
+
+        # ── Exercise selector row ─────────────────────────────────────
+        ex_row = ttk.Frame(self)
+        ex_row.pack(fill="x", pady=(2, 6))
+
+        ttk.Label(ex_row, text="Exercise:").pack(side="left")
         self.exercise_var = tk.StringVar()
         self.exercise_box = ttk.Combobox(
-            filter_row, textvariable=self.exercise_var, state="normal", width=32,
+            ex_row, textvariable=self.exercise_var, state="readonly", width=36,
         )
         self.exercise_box.pack(side="left", padx=4)
-        self.exercise_box.bind("<KeyRelease>", self._on_exercise_typed)
         self._reload_exercise_list()
 
         # ── Entry fields ──────────────────────────────────────────────
@@ -106,19 +115,22 @@ class WorkoutFrame(ttk.Frame):
 
     # ── Helpers ───────────────────────────────────────────────────────
 
-    def _reload_exercise_list(self, filter_text: str = "") -> None:
+    def _reload_exercise_list(self) -> None:
         muscle = self.muscle_var.get()
         names = get_exercise_names(muscle if muscle != _ALL else "")
-        if filter_text:
-            names = [n for n in names if filter_text.lower() in n.lower()]
+        search = self.search_var.get().strip().lower()
+        if search:
+            names = [n for n in names if search in n.lower()]
         self.exercise_box["values"] = names
+        if names and self.exercise_var.get() not in names:
+            self.exercise_var.set(names[0])
 
     def _on_muscle_changed(self, _event: tk.Event | None = None) -> None:
+        self.search_var.set("")
         self._reload_exercise_list()
-        self.exercise_var.set("")
 
-    def _on_exercise_typed(self, _event: tk.Event | None = None) -> None:
-        self._reload_exercise_list(filter_text=self.exercise_var.get())
+    def _on_search_changed(self, *_args) -> None:
+        self._reload_exercise_list()
 
     def _clear_form(self) -> None:
         self.exercise_var.set("")
@@ -137,7 +149,7 @@ class WorkoutFrame(ttk.Frame):
 
         exercise_name = self.exercise_var.get().strip()
         if not exercise_name:
-            messagebox.showerror("Missing exercise", "Please select or type an exercise name.")
+            messagebox.showerror("Missing exercise", "Please select an exercise from the dropdown.")
             return
 
         try:

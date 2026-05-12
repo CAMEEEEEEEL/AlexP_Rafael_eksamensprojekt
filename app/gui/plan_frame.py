@@ -73,28 +73,35 @@ class PlanFrame(ttk.Frame):
 
         ttk.Label(ex_col, text="Exercises", font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(0, 4))
 
-        # Muscle filter + exercise picker
+        # Muscle filter + search + exercise picker
         picker_row = ttk.Frame(ex_col)
-        picker_row.pack(fill="x", pady=(0, 4))
+        picker_row.pack(fill="x", pady=(0, 2))
 
         ttk.Label(picker_row, text="Muscle:").grid(row=0, column=0, sticky="w")
         self.muscle_var = tk.StringVar(value=_ALL)
         muscle_box = ttk.Combobox(
             picker_row, textvariable=self.muscle_var,
-            values=[_ALL] + get_muscle_groups(), state="readonly", width=13,
+            values=[_ALL] + get_muscle_groups(), state="readonly", width=12,
         )
-        muscle_box.grid(row=0, column=1, sticky="w", padx=(4, 12))
+        muscle_box.grid(row=0, column=1, sticky="w", padx=(4, 8))
         muscle_box.bind("<<ComboboxSelected>>", self._on_muscle_changed)
 
-        ttk.Label(picker_row, text="Exercise:").grid(row=0, column=2, sticky="w")
+        ttk.Label(picker_row, text="Search:").grid(row=0, column=2, sticky="w")
+        self.search_var = tk.StringVar()
+        ttk.Entry(picker_row, textvariable=self.search_var, width=14).grid(row=0, column=3, sticky="w", padx=(4, 8))
+        self.search_var.trace_add("write", self._on_search_changed)
+
+        ex_pick_row = ttk.Frame(ex_col)
+        ex_pick_row.pack(fill="x", pady=(2, 4))
+
+        ttk.Label(ex_pick_row, text="Exercise:").pack(side="left")
         self.exercise_var = tk.StringVar()
-        self.exercise_box = ttk.Combobox(picker_row, textvariable=self.exercise_var, width=22)
-        self.exercise_box.grid(row=0, column=3, sticky="w", padx=4)
-        self.exercise_box.bind("<KeyRelease>", self._on_exercise_typed)
+        self.exercise_box = ttk.Combobox(ex_pick_row, textvariable=self.exercise_var, state="readonly", width=28)
+        self.exercise_box.pack(side="left", padx=4)
         self.exercise_box.bind("<Return>", lambda _e: self._add_exercise())
         self._reload_exercise_list()
 
-        ttk.Button(picker_row, text="Add", command=self._add_exercise).grid(row=0, column=4, padx=(4, 0))
+        ttk.Button(ex_pick_row, text="Add", command=self._add_exercise).pack(side="left", padx=(4, 0))
 
         # Exercise listbox + up/down/remove buttons
         ex_body = ttk.Frame(ex_col)
@@ -126,19 +133,22 @@ class PlanFrame(ttk.Frame):
 
     # ── Exercise picker helpers ───────────────────────────────────────
 
-    def _reload_exercise_list(self, filter_text: str = "") -> None:
+    def _reload_exercise_list(self) -> None:
         muscle = self.muscle_var.get()
         names = get_exercise_names(muscle if muscle != _ALL else "")
-        if filter_text:
-            names = [n for n in names if filter_text.lower() in n.lower()]
+        search = self.search_var.get().strip().lower()
+        if search:
+            names = [n for n in names if search in n.lower()]
         self.exercise_box["values"] = names
+        if names and self.exercise_var.get() not in names:
+            self.exercise_var.set(names[0])
 
     def _on_muscle_changed(self, _event: tk.Event | None = None) -> None:
+        self.search_var.set("")
         self._reload_exercise_list()
-        self.exercise_var.set("")
 
-    def _on_exercise_typed(self, _event: tk.Event | None = None) -> None:
-        self._reload_exercise_list(filter_text=self.exercise_var.get())
+    def _on_search_changed(self, *_args) -> None:
+        self._reload_exercise_list()
 
     # ── Selection helpers ─────────────────────────────────────────────
 

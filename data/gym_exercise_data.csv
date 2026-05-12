@@ -1,2 +1,96 @@
 exercise,muscle_group,equipment,difficulty
 Barbell Bench Press,Chest,Barbell,Intermediate
+Incline Barbell Bench Press,Chest,Barbell,Intermediate
+Decline Barbell Bench Press,Chest,Barbell,Intermediate
+Dumbbell Bench Press,Chest,Dumbbell,Beginner
+Incline Dumbbell Press,Chest,Dumbbell,Intermediate
+Decline Dumbbell Press,Chest,Dumbbell,Intermediate
+Cable Chest Fly,Chest,Cable,Beginner
+Dumbbell Chest Fly,Chest,Dumbbell,Beginner
+Pec Deck Machine,Chest,Machine,Beginner
+Push-Up,Chest,Bodyweight,Beginner
+Wide Push-Up,Chest,Bodyweight,Beginner
+Dips (Chest),Chest,Bodyweight,Intermediate
+Landmine Press,Chest,Barbell,Intermediate
+Barbell Squat,Legs,Barbell,Intermediate
+Front Squat,Legs,Barbell,Advanced
+Goblet Squat,Legs,Dumbbell,Beginner
+Bulgarian Split Squat,Legs,Dumbbell,Intermediate
+Leg Press,Legs,Machine,Beginner
+Hack Squat,Legs,Machine,Intermediate
+Leg Extension,Legs,Machine,Beginner
+Leg Curl,Legs,Machine,Beginner
+Romanian Deadlift,Legs,Barbell,Intermediate
+Stiff-Leg Deadlift,Legs,Dumbbell,Intermediate
+Lunges,Legs,Dumbbell,Beginner
+Walking Lunges,Legs,Dumbbell,Beginner
+Step-Ups,Legs,Dumbbell,Beginner
+Calf Raise (Standing),Legs,Machine,Beginner
+Calf Raise (Seated),Legs,Machine,Beginner
+Wall Sit,Legs,Bodyweight,Beginner
+Box Jump,Legs,Bodyweight,Intermediate
+Sumo Squat,Legs,Dumbbell,Beginner
+Barbell Deadlift,Back,Barbell,Intermediate
+Sumo Deadlift,Back,Barbell,Intermediate
+Pull-Up,Back,Bodyweight,Intermediate
+Chin-Up,Back,Bodyweight,Intermediate
+Lat Pulldown,Back,Cable,Beginner
+Seated Cable Row,Back,Cable,Beginner
+Bent-Over Barbell Row,Back,Barbell,Intermediate
+Dumbbell Row,Back,Dumbbell,Beginner
+T-Bar Row,Back,Barbell,Intermediate
+Chest-Supported Row,Back,Dumbbell,Beginner
+Face Pull,Back,Cable,Beginner
+Straight-Arm Pulldown,Back,Cable,Beginner
+Good Morning,Back,Barbell,Intermediate
+Hyperextension,Back,Bodyweight,Beginner
+Barbell Overhead Press,Shoulders,Barbell,Intermediate
+Dumbbell Shoulder Press,Shoulders,Dumbbell,Beginner
+Arnold Press,Shoulders,Dumbbell,Intermediate
+Cable Lateral Raise,Shoulders,Cable,Beginner
+Dumbbell Lateral Raise,Shoulders,Dumbbell,Beginner
+Front Raise,Shoulders,Dumbbell,Beginner
+Reverse Pec Deck,Shoulders,Machine,Beginner
+Rear Delt Fly,Shoulders,Dumbbell,Beginner
+Upright Row,Shoulders,Barbell,Beginner
+Shrugs,Shoulders,Barbell,Beginner
+Barbell Curl,Biceps,Barbell,Beginner
+Dumbbell Curl,Biceps,Dumbbell,Beginner
+Hammer Curl,Biceps,Dumbbell,Beginner
+Incline Dumbbell Curl,Biceps,Dumbbell,Intermediate
+Cable Curl,Biceps,Cable,Beginner
+Preacher Curl,Biceps,Barbell,Beginner
+Concentration Curl,Biceps,Dumbbell,Beginner
+Spider Curl,Biceps,Dumbbell,Intermediate
+Reverse Curl,Biceps,Barbell,Beginner
+Close-Grip Bench Press,Triceps,Barbell,Intermediate
+Tricep Dip,Triceps,Bodyweight,Intermediate
+Skull Crusher,Triceps,Barbell,Intermediate
+Cable Tricep Pushdown,Triceps,Cable,Beginner
+Overhead Tricep Extension,Triceps,Dumbbell,Beginner
+Kickback,Triceps,Dumbbell,Beginner
+Diamond Push-Up,Triceps,Bodyweight,Intermediate
+Plank,Core,Bodyweight,Beginner
+Side Plank,Core,Bodyweight,Beginner
+Crunch,Core,Bodyweight,Beginner
+Bicycle Crunch,Core,Bodyweight,Beginner
+Leg Raise,Core,Bodyweight,Beginner
+Hanging Leg Raise,Core,Bodyweight,Intermediate
+Russian Twist,Core,Bodyweight,Beginner
+Ab Wheel Rollout,Core,Bodyweight,Advanced
+Cable Crunch,Core,Cable,Beginner
+Dead Bug,Core,Bodyweight,Beginner
+Mountain Climber,Core,Bodyweight,Beginner
+Hip Thrust,Glutes,Barbell,Intermediate
+Glute Bridge,Glutes,Bodyweight,Beginner
+Cable Kickback,Glutes,Cable,Beginner
+Donkey Kick,Glutes,Bodyweight,Beginner
+Sumo Deadlift (High Bar),Glutes,Barbell,Intermediate
+Power Clean,Full Body,Barbell,Advanced
+Barbell Thruster,Full Body,Barbell,Advanced
+Kettlebell Swing,Full Body,Kettlebell,Intermediate
+Turkish Get-Up,Full Body,Kettlebell,Advanced
+Burpee,Full Body,Bodyweight,Intermediate
+Clean and Press,Full Body,Barbell,Advanced
+Sled Push,Full Body,Sled,Intermediate
+Battle Ropes,Full Body,Cables,Intermediate

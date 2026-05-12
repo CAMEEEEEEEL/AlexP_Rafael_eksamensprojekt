@@ -1,6 +1,6 @@
 # tkinter is included with standard Python installations
-pandas
-numpy
-matplotlib
-opencv-python
-pillow
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.7
+opencv-python>=4.8
+pillow>=10.0

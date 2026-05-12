@@ -1,0 +1,6 @@
+# tkinter is included with standard Python installations
+pandas
+numpy
+matplotlib
+opencv-python
+pillow

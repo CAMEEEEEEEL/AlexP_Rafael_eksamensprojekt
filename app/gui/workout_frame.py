@@ -202,15 +202,24 @@ class WorkoutFrame(ttk.Frame):
         if not result.get("success"):
             messagebox.showwarning("Form Check", result.get("message", "Form check failed."))
             return
+
+        engine = result.get("engine", "OpenCV")
         tips = "\n• ".join(result.get("tips", []))
+        rom = result.get("rom_score", 0)
+        con = result.get("consistency_score", 0)
+        stab = result.get("stability_score", 0)
+
         messagebox.showinfo(
             "Form Check Result",
             (
-                f"Exercise: {exercise_name}\n"
-                f"Overall score: {result['score']}/100\n"
-                f"ROM: {result['rom_score']}  Stability: {result['stability_score']}  Consistency: {result['consistency_score']}\n"
-                f"Estimated reps: {result['rep_count']}\n\n"
-                f"Tips:\n• {tips}"
+                f"Exercise: {result.get('exercise', exercise_name)}\n"
+                f"Engine: {engine}\n"
+                f"\nOverall score: {result['score']}/100\n"
+                f"Range of motion: {rom}/100\n"
+                f"Consistency:     {con}/100\n"
+                f"Stability:       {stab}/100\n"
+                f"\nReps detected: {result.get('rep_count', 0)}\n"
+                f"\nFeedback:\n• {tips}"
             ),
         )
 

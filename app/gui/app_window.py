@@ -7,14 +7,12 @@ from app.gui.dashboard_frame import DashboardFrame
 from app.gui.leaderboard_frame import LeaderboardFrame
 from app.gui.login_frame import LoginFrame
 from app.gui.plan_frame import PlanFrame
-from app.gui.progress_frame import ProgressFrame
 from app.gui.workout_frame import WorkoutFrame
 
 _NAV_ITEMS = [
     ("Dashboard", DashboardFrame),
     ("Workout", WorkoutFrame),
     ("Plans", PlanFrame),
-    ("Progress", ProgressFrame),
     ("Leaderboard", LeaderboardFrame),
 ]
 
@@ -39,15 +37,16 @@ class FitTrackApp(tk.Tk):
 
         ttk.Label(self.sidebar, text="FitTrack", font=("Segoe UI", 14, "bold")).pack(pady=(0, 12))
 
-        # Login/Register button (always visible)
-        ttk.Button(
+        # Login/Register button — enabled only when logged OUT
+        self.login_btn = ttk.Button(
             self.sidebar, text="Login / Register",
             command=lambda: self.show_frame(LoginFrame), width=20,
-        ).pack(fill="x", pady=4)
+        )
+        self.login_btn.pack(fill="x", pady=4)
 
         ttk.Separator(self.sidebar, orient="horizontal").pack(fill="x", pady=6)
 
-        # Protected nav buttons (disabled until logged in)
+        # Protected nav buttons — enabled only when logged IN
         self._nav_buttons: list[ttk.Button] = []
         for title, frame_cls in _NAV_ITEMS:
             btn = ttk.Button(
@@ -87,13 +86,15 @@ class FitTrackApp(tk.Tk):
             refresh()
 
     def on_login(self) -> None:
-        """Enable nav buttons after successful login."""
+        """Lock login button and unlock nav after successful login."""
+        self.login_btn.state(["disabled"])
         for btn in self._nav_buttons:
             btn.state(["!disabled"])
         self.logout_btn.state(["!disabled"])
 
     def _logout(self) -> None:
         self.current_user = None
+        self.login_btn.state(["!disabled"])
         for btn in self._nav_buttons:
             btn.state(["disabled"])
         self.logout_btn.state(["disabled"])

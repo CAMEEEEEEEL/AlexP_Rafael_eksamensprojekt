@@ -12,7 +12,6 @@ from app.plan import (
     delete_plan,
     is_rest_day,
     load_plans,
-    move_exercise,
     remove_exercise_from_day,
     set_rest_day,
 )
@@ -59,7 +58,7 @@ class PlanFrame(ttk.Frame):
 
         self.days_list = tk.Listbox(
             days_col, width=22, height=7, selectmode="single",
-            font=("Segoe UI", 10), activestyle="none",
+            font=("Segoe UI", 10), activestyle="none", exportselection=False,
         )
         self.days_list.pack(fill="y")
         self.days_list.bind("<<ListboxSelect>>", self._on_day_selected)
@@ -107,7 +106,7 @@ class PlanFrame(ttk.Frame):
         ex_body = ttk.Frame(ex_col)
         ex_body.pack(fill="both", expand=True)
 
-        self.exercise_list = tk.Listbox(ex_body, height=12, selectmode="single", font=("Segoe UI", 10))
+        self.exercise_list = tk.Listbox(ex_body, height=12, selectmode="single", font=("Segoe UI", 10), exportselection=False)
         ex_scroll = ttk.Scrollbar(ex_body, orient="vertical", command=self.exercise_list.yview)
         self.exercise_list.configure(yscrollcommand=ex_scroll.set)
         self.exercise_list.pack(side="left", fill="both", expand=True)
@@ -115,8 +114,6 @@ class PlanFrame(ttk.Frame):
 
         btn_col = ttk.Frame(ex_body)
         btn_col.pack(side="left", fill="y", padx=(6, 0))
-        ttk.Button(btn_col, text="▲ Up",     command=self._move_up,         width=10).pack(pady=(0, 4))
-        ttk.Button(btn_col, text="▼ Down",   command=self._move_down,       width=10).pack(pady=(0, 12))
         ttk.Button(btn_col, text="✕ Remove", command=self._remove_exercise, width=10).pack()
 
         # ── Column 3: Plan overview ───────────────────────────────────
@@ -246,25 +243,6 @@ class PlanFrame(ttk.Frame):
         self._load_days(keep_selection=day_name)
         self._refresh_overview()
 
-    def _move_up(self) -> None:
-        self._move_exercise(-1)
-
-    def _move_down(self) -> None:
-        self._move_exercise(1)
-
-    def _move_exercise(self, direction: int) -> None:
-        user = self.app.current_user
-        plan_name = self._selected_plan()
-        day_name = self._selected_day()
-        idx = self._selected_exercise_index()
-        if user is None or not plan_name or not day_name or idx is None:
-            return
-        new_idx = move_exercise(user.username, plan_name, day_name, idx, direction)
-        self._load_exercises()
-        # Re-select the moved item
-        self.exercise_list.selection_set(new_idx)
-        self.exercise_list.see(new_idx)
-        self._refresh_overview()
 
     # ── Load helpers ──────────────────────────────────────────────────
 

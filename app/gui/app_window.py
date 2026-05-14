@@ -7,6 +7,7 @@ from app.gui.dashboard_frame import DashboardFrame
 from app.gui.leaderboard_frame import LeaderboardFrame
 from app.gui.login_frame import LoginFrame
 from app.gui.plan_frame import PlanFrame
+from app.gui.ranks_frame import RanksFrame
 from app.gui.workout_frame import WorkoutFrame
 
 _NAV_ITEMS = [
@@ -14,6 +15,7 @@ _NAV_ITEMS = [
     ("Workout", WorkoutFrame),
     ("Plans", PlanFrame),
     ("Leaderboard", LeaderboardFrame),
+    ("Ranks", RanksFrame),
 ]
 
 
@@ -27,6 +29,7 @@ class FitTrackApp(tk.Tk):
         self.minsize(900, 600)
         self.current_user = None
         self.current_frame = None
+        self.current_session_id: str = ""   # set when a workout session is active
 
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
@@ -94,6 +97,7 @@ class FitTrackApp(tk.Tk):
 
     def _logout(self) -> None:
         self.current_user = None
+        self.current_session_id = ""
         self.login_btn.state(["!disabled"])
         for btn in self._nav_buttons:
             btn.state(["disabled"])

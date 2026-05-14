@@ -1,8 +1,16 @@
 [
   {
     "username": "alex",
+<<<<<<< HEAD
+    "xp": 30,
+    "level": 1,
+    "rank": "Beginner"
+  },
+  {
+=======
     "xp": 110,
     "level": 2,
     "rank": "Iron"
+>>>>>>> 5a903b5ff8017a7817a8b40e8e0c97be018fea14
   }
 ]

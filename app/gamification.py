@@ -11,7 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 LEADERBOARD_PATH = PROJECT_ROOT / "data" / "leaderboard.json"
 
 XP_PER_SET = 10
-LEVEL_THRESHOLDS = [0, 100, 250, 500, 900, 1400, 2000, 2800]
+LEVEL_THRESHOLDS = [0, 500, 1250, 2500, 4500, 7000, 10000, 14000]
 RANK_NAMES = ["Beginner", "Iron", "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Elite"]
 
 

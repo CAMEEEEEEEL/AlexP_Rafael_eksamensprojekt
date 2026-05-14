@@ -22,19 +22,27 @@ class LoginFrame(ttk.Frame):
         self.age = ttk.Entry(self)
         self.weight = ttk.Entry(self)
         self.height = ttk.Entry(self)
-        self.goals = ttk.Entry(self, width=40)
 
-        fields = [
+        for label, widget in [
             ("Username", self.username),
             ("Password", self.password),
             ("Age", self.age),
             ("Weight (kg)", self.weight),
             ("Height (cm)", self.height),
-            ("Goals", self.goals),
-        ]
-        for label, widget in fields:
+        ]:
             ttk.Label(self, text=label).pack(anchor="w")
             widget.pack(fill="x", pady=4)
+
+        ttk.Label(self, text="Goal (for registration)").pack(anchor="w")
+        self.goals_var = tk.StringVar(value="Maintain Weight")
+        self.goals = ttk.Combobox(
+            self,
+            textvariable=self.goals_var,
+            values=["Lose Weight", "Maintain Weight", "Gain Weight"],
+            state="readonly",
+            width=38,
+        )
+        self.goals.pack(fill="x", pady=4)
 
         button_row = ttk.Frame(self)
         button_row.pack(pady=10, fill="x")
@@ -72,7 +80,7 @@ class LoginFrame(ttk.Frame):
                 age=int(self.age.get() or 0),
                 weight_kg=float(self.weight.get() or 0),
                 height_cm=float(self.height.get() or 0),
-                goals=self.goals.get().strip(),
+                goals=self.goals_var.get(),
             )
         except ValueError:
             messagebox.showerror("Invalid input", "Age, weight, and height must be numeric.")

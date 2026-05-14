@@ -1,4 +1,4 @@
-"""Workout logging frame — with sessions, plan import, and per-set reps."""
+"""Workout logging frame — plan import and per-set reps."""
 
 import datetime as dt
 import tkinter as tk
@@ -8,7 +8,7 @@ from app.auth import save_profile
 from app.camera import run_form_check_session
 from app.exercises import get_exercise_names, get_muscle_groups
 from app.gamification import add_xp, calculate_xp, update_leaderboard
-from app.plan import WEEK_DAYS, is_rest_day, load_plans
+from app.plan import is_rest_day, load_plans
 from app.workout import (
     get_personal_record,
     get_recent_workouts,
@@ -27,22 +27,9 @@ class WorkoutFrame(ttk.Frame):
         super().__init__(parent)
         self.app = app
 
-        ttk.Label(self, text="Log Workout", font=("Segoe UI", 18, "bold")).pack(anchor="w", pady=(8, 2))
+        ttk.Label(self, text="Log Workout", font=("Segoe UI", 18, "bold")).pack(anchor="w", pady=(8, 6))
 
-        # ── Session bar ───────────────────────────────────────────────
-        session_bar = ttk.Frame(self)
-        session_bar.pack(fill="x", pady=(0, 4))
-
-        self.session_label = tk.StringVar(value="No active session")
-        ttk.Label(session_bar, textvariable=self.session_label, foreground="grey").pack(side="left")
-        self.start_btn = ttk.Button(session_bar, text="Start Session", command=self._start_session)
-        self.start_btn.pack(side="left", padx=(12, 4))
-        self.end_btn = ttk.Button(session_bar, text="End Session", command=self._end_session, state="disabled")
-        self.end_btn.pack(side="left")
-
-        ttk.Separator(self, orient="horizontal").pack(fill="x", pady=(0, 6))
-
-        # ── Load from plan (collapsible row) ──────────────────────────
+        # ── Load from plan ────────────────────────────────────────────
         plan_bar = ttk.Frame(self)
         plan_bar.pack(fill="x", pady=(0, 4))
 
@@ -55,13 +42,11 @@ class WorkoutFrame(ttk.Frame):
         self.day_var = tk.StringVar()
         self.day_box = ttk.Combobox(plan_bar, textvariable=self.day_var, state="readonly", width=14)
         self.day_box.pack(side="left", padx=(0, 8))
-        self.day_box.bind("<<ComboboxSelected>>", self._on_day_selected)
 
         ttk.Button(plan_bar, text="Load", command=self._load_plan_exercises).pack(side="left")
 
         # Plan exercise list (hidden until loaded)
         self.plan_ex_frame = ttk.Frame(self)
-        self.plan_ex_frame.pack(fill="x", pady=(0, 4))
         ttk.Label(self.plan_ex_frame, text="Today's exercises — click to pre-fill:").pack(anchor="w")
         self.plan_ex_list = tk.Listbox(self.plan_ex_frame, height=4, selectmode="single",
                                         exportselection=False, font=("Segoe UI", 9))
@@ -69,7 +54,7 @@ class WorkoutFrame(ttk.Frame):
         self.plan_ex_list.bind("<<ListboxSelect>>", self._on_plan_exercise_selected)
         self.plan_ex_frame.pack_forget()   # hidden by default
 
-        ttk.Separator(self, orient="horizontal").pack(fill="x", pady=(0, 6))
+        ttk.Separator(self, orient="horizontal").pack(fill="x", pady=(4, 6))
 
         # ── Exercise picker ───────────────────────────────────────────
         filter_row = ttk.Frame(self)
@@ -105,11 +90,11 @@ class WorkoutFrame(ttk.Frame):
         self.weight_entry = ttk.Entry(form, width=8)
         self.notes_entry  = ttk.Entry(form, width=28)
 
-        for col, (lbl, widget, hint) in enumerate([
-            ("Sets",                self.sets_entry,   ""),
-            ("Reps (e.g. 10 or 8,6,4)", self.reps_entry, ""),
-            ("Weight (kg)",         self.weight_entry, ""),
-            ("Notes (optional)",    self.notes_entry,  ""),
+        for col, (lbl, widget) in enumerate([
+            ("Sets",                    self.sets_entry),
+            ("Reps (e.g. 10 or 8,6,4)", self.reps_entry),
+            ("Weight (kg)",             self.weight_entry),
+            ("Notes (optional)",        self.notes_entry),
         ]):
             ttk.Label(form, text=lbl).grid(row=0, column=col, sticky="w", padx=(0, 8))
             widget.grid(row=1, column=col, sticky="w", padx=(0, 8))
@@ -150,31 +135,6 @@ class WorkoutFrame(ttk.Frame):
         self.recent_tree.pack(side="left", fill="both", expand=True)
         scroll.pack(side="left", fill="y")
 
-    # ── Session management ────────────────────────────────────────────
-
-    def _start_session(self) -> None:
-        if self.app.current_user is None:
-            messagebox.showwarning("Not logged in", "Please log in first.")
-            return
-        self.app.current_session_id = dt.datetime.now().isoformat(timespec="seconds")
-        self._update_session_ui()
-
-    def _end_session(self) -> None:
-        self.app.current_session_id = ""
-        self._update_session_ui()
-        messagebox.showinfo("Session ended", "Great workout! Session has been saved.")
-
-    def _update_session_ui(self) -> None:
-        if self.app.current_session_id:
-            t = self.app.current_session_id[11:16]   # HH:MM
-            self.session_label.set(f"Session active since {t}")
-            self.start_btn.state(["disabled"])
-            self.end_btn.state(["!disabled"])
-        else:
-            self.session_label.set("No active session")
-            self.start_btn.state(["!disabled"])
-            self.end_btn.state(["disabled"])
-
     # ── Plan import ───────────────────────────────────────────────────
 
     def _reload_plans(self) -> None:
@@ -192,21 +152,17 @@ class WorkoutFrame(ttk.Frame):
         plans = load_plans(user.username)
         days = [d for d, exs in plans.get(plan, {}).items() if not is_rest_day(exs)]
         self.day_box["values"] = days
-        # Default to today's weekday if available
         today = dt.date.today().strftime("%A")
         self.day_var.set(today if today in days else (days[0] if days else ""))
-
-    def _on_day_selected(self, _e=None) -> None:
-        pass  # user clicks Load button manually
 
     def _load_plan_exercises(self) -> None:
         user = self.app.current_user
         plan = self.plan_var.get()
-        day = self.day_var.get()
+        day  = self.day_var.get()
         if not user or not plan or not day:
             messagebox.showwarning("Select plan", "Choose a plan and day first.")
             return
-        plans = load_plans(user.username)
+        plans     = load_plans(user.username)
         exercises = plans.get(plan, {}).get(day, [])
         if not exercises or is_rest_day(exercises):
             messagebox.showinfo("Rest Day", "That day is marked as a rest day.")
@@ -214,31 +170,25 @@ class WorkoutFrame(ttk.Frame):
         self.plan_ex_list.delete(0, "end")
         for ex in exercises:
             self.plan_ex_list.insert("end", ex)
-        self.plan_ex_frame.pack(fill="x", pady=(0, 4), after=self.plan_ex_frame.master.children.get(
-            list(self.plan_ex_frame.master.children.keys())[0]))
-        # Re-show the frame
         self.plan_ex_frame.pack(fill="x", pady=(0, 4))
 
     def _on_plan_exercise_selected(self, _e=None) -> None:
         sel = self.plan_ex_list.curselection()
         if not sel:
             return
-        name = self.plan_ex_list.get(sel[0])
+        name = self.plan_ex_list.get(sel[0]).lstrip("✓ ")
         self.exercise_var.set(name)
-        # Try to match muscle group to update dropdown values
         self._reload_exercise_list()
 
     # ── Exercise picker helpers ───────────────────────────────────────
 
     def _reload_exercise_list(self) -> None:
         muscle = self.muscle_var.get()
-        names = get_exercise_names(muscle if muscle != _ALL else "")
+        names  = get_exercise_names(muscle if muscle != _ALL else "")
         search = self.search_var.get().strip().lower()
         if search:
             names = [n for n in names if search in n.lower()]
         self.exercise_box["values"] = names
-        if names and self.exercise_var.get() not in names:
-            self.exercise_box["values"] = names
 
     def _on_muscle_changed(self, _e=None) -> None:
         self.search_var.set("")
@@ -260,13 +210,6 @@ class WorkoutFrame(ttk.Frame):
         if user is None:
             messagebox.showwarning("Not logged in", "Please log in first.")
             return
-
-        # Prompt to start session if none active
-        if not self.app.current_session_id:
-            if messagebox.askyesno("No session", "No workout session is active. Start one now?"):
-                self._start_session()
-            else:
-                return
 
         exercise_name = self.exercise_var.get().strip()
         if not exercise_name:
@@ -301,7 +244,6 @@ class WorkoutFrame(ttk.Frame):
                 reps_input=reps_raw,
                 weight_kg=weight,
                 notes=self.notes_entry.get().strip(),
-                session_id=self.app.current_session_id,
             )
         except ValueError as exc:
             messagebox.showerror("Invalid input", str(exc))
@@ -315,7 +257,7 @@ class WorkoutFrame(ttk.Frame):
         pr = get_personal_record(user, entry["exercise"])
         pr_value = pr["estimated_1rm"] if pr else entry["estimated_1rm"]
 
-        # Mark exercise as logged in plan list
+        # Mark exercise as done in plan list
         for i in range(self.plan_ex_list.size()):
             if self.plan_ex_list.get(i).lstrip("✓ ") == exercise_name:
                 self.plan_ex_list.delete(i)
@@ -325,12 +267,11 @@ class WorkoutFrame(ttk.Frame):
         self._clear_form()
         self.refresh()
 
-        reps_display = entry["reps"]
         messagebox.showinfo(
             "Exercise saved",
             (
                 f"{entry['exercise']} — {entry['date']}\n"
-                f"Sets: {entry['sets']}  Reps: {reps_display}  Weight: {weight} kg\n"
+                f"Sets: {entry['sets']}  Reps: {entry['reps']}  Weight: {weight} kg\n"
                 f"Volume: {entry['volume_kg']} kg\n"
                 f"Estimated 1RM: {entry['estimated_1rm']} kg  (PR: {pr_value} kg)\n"
                 f"XP gained: +{xp_gain}"
@@ -346,7 +287,7 @@ class WorkoutFrame(ttk.Frame):
             messagebox.showwarning("Form Check", result.get("message", "Form check failed."))
             return
         engine = result.get("engine", "OpenCV")
-        tips = "\n• ".join(result.get("tips", []))
+        tips   = "\n• ".join(result.get("tips", []))
         messagebox.showinfo(
             "Form Check Result",
             (
@@ -364,7 +305,6 @@ class WorkoutFrame(ttk.Frame):
     # ── Refresh ───────────────────────────────────────────────────────
 
     def refresh(self) -> None:
-        self._update_session_ui()
         self._reload_plans()
 
         user = self.app.current_user

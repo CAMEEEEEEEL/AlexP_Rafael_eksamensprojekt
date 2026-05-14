@@ -198,7 +198,7 @@ class WorkoutFrame(ttk.Frame):
 
     def _run_form_check(self) -> None:
         exercise_name = self.exercise_var.get().strip() or "Exercise"
-        result = run_form_check_session(exercise_name)
+        result = run_form_check_session(exercise_name, duration_seconds=60)
         if not result.get("success"):
             messagebox.showwarning("Form Check", result.get("message", "Form check failed."))
             return

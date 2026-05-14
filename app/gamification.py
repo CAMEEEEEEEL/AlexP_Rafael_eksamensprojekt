@@ -47,8 +47,14 @@ def load_leaderboard() -> list[dict[str, Any]]:
     """Load leaderboard entries from local JSON storage."""
     if not LEADERBOARD_PATH.exists():
         return []
-    with LEADERBOARD_PATH.open("r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with LEADERBOARD_PATH.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, list) else []
+    except (json.JSONDecodeError, OSError):
+        # Corrupt or unreadable file — reset it and start fresh
+        LEADERBOARD_PATH.write_text("[]", encoding="utf-8")
+        return []
 
 
 def update_leaderboard(user: User) -> None:
